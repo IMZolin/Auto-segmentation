@@ -268,6 +268,7 @@ class AutoSegmentation:
 
     def calculate_sim_histogram(self, center: Tuple[int, int]) -> None:
         """Calculate and show a histogram of the similarity indices with the marked beads."""
+        # TODO: correct histogram for 3d average bead
         try:
             if self.mark_beads_img is None:
                 raise Exception("Marked beads image is not available.")
@@ -305,15 +306,20 @@ class AutoSegmentation:
                 fig, axs = plt.subplots(3, 1, sharex=False, figsize=(2, 6))
 
                 # XY Projection
-                axs[0].imshow(self.averaged_bead[projections_coord[0], :, :], cmap='jet')
+                # TODO: make independence from the channel;
+                # TODO: make layer switching for projections
+                axs[0].imshow(self.averaged_bead[projections_coord[0], :, :, 1], cmap='jet',
+                              vmin=np.min(self.averaged_bead), vmax=np.max(self.averaged_bead))
                 axs[0].set_title('XY Projection')
 
                 # XZ Projection
-                axs[1].imshow(self.averaged_bead[:, projections_coord[1], :], cmap='jet')
+                axs[1].imshow(self.averaged_bead[:, projections_coord[1], :, 1], cmap='jet',
+                              vmin=np.min(self.averaged_bead), vmax=np.max(self.averaged_bead))
                 axs[1].set_title('XZ Projection')
 
                 # YZ Projection
-                axs[2].imshow(self.averaged_bead[:, :, projections_coord[2]], cmap='jet')
+                axs[2].imshow(self.averaged_bead[:, :, projections_coord[2], 1], cmap='jet',
+                              vmin=np.min(self.averaged_bead), vmax=np.max(self.averaged_bead))
                 axs[2].set_title('YZ Projection')
 
                 self.avg_bead_2d_projections = fig
@@ -326,6 +332,7 @@ class AutoSegmentation:
 
     def create_3d_projection(self, is_show: bool = False) -> None:
         """Create and save the 3D projection for the averaged bead."""
+        # TODO: correct 3d(4d) intensity chart for 3d average bead
         try:
             if self.averaged_bead is None:
                 raise ValueError("Averaged bead is not available. Run average_bead first.")
